@@ -1,0 +1,8 @@
+- name: Sabre Ansible Playbooks
+  hosts: all
+  user: predator
+  sudo: no
+  gather_facts: False
+  tasks:
+   - include: tasks/install.yaml
+   - debug: msg="reading from {{env_name}}"

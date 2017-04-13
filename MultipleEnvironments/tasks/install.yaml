@@ -1,0 +1,2 @@
+    - name: Create file and copy content
+      copy: content="{{env_name}} , helloworld" dest=/tmp/{{env_name}}.txt
