@@ -5,4 +5,5 @@
   gather_facts: False
   tasks:
    - include: tasks/install.yaml
+     when: "{{appdynamics['install']}} == true"
    - debug: msg="reading from {{env_name}}"

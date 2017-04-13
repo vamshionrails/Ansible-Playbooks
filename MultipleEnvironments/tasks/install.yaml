@@ -1,2 +1,2 @@
     - name: Create file and copy content
-      copy: content="{{env_name}} , helloworld" dest=/tmp/{{env_name}}.txt
+      copy: content="{{env_name}}::{{appdynamics['install']}} , helloworld" dest=/tmp/{{env_name}}.txt

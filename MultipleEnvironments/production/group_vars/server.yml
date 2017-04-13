@@ -1,1 +1,3 @@
 env_name: production
+appdynamics:
+  install: false
