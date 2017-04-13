@@ -1,0 +1,17 @@
+    - name: Create Directory {{tmpdir}}
+      file: path={{tmpdir}} state=directory recurse=yes
+
+    - name: Download {{appname}}
+      get_url: url={{srcurl}}/{{srcversion}} dest='{{tmpdir}}/{{srcversion}}'
+
+    - name: Create ElasticSearch folder
+      file: path={{tmpdir}}/elasticsearch-1.7.3 state=directory
+
+    - name: Unzip ElasticSearch
+      unarchive: src={{tmpdir}}/elasticsearch-1.7.3.tar.gz dest={{tmpdir}}
+
+    - name: Create latestVersion link
+      file: src='{{tmpdir}}/elasticsearch-1.7.3' dest={{tmpdir}}/latestVersion state=link
+
+    - name: Delete the src file
+      file: path={{tmpdir}}/{{srcversion}} state=absent
