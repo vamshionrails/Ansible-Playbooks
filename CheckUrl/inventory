@@ -1,0 +1,4 @@
+[local]
+raptor@predators-Mac-mini.local ansible_connection=local
+[mac]
+raptor@predators-Mac-mini.local ansible_connection=local

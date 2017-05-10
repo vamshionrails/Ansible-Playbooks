@@ -1,0 +1,60 @@
+- name: playbook
+  hosts: all
+
+  vars:
+    project_root: /tmp/automation
+    url_enabled: False
+    apache_url: http://mirror.nexcess.net/apache//httpd/
+    apache_file: httpd-2.4.25.tar.gz
+  tasks:
+    - name: create directory
+      file: path=/tmp/automation/solr state=directory
+
+    - name: Check that the solr zip file exists on remote machine
+      stat:
+        path: /tmp/automation/solr/{{apache_file}}
+      register: solr_exists
+
+    - debug:
+        msg: "File doesnt exists on remote machine"
+      when: solr_exists.stat.exists == False
+
+    - debug:
+        msg: "File exists on remote machine"
+      when: solr_exists.stat.exists == True
+
+    - name: Check Url for Downloading
+      uri:
+        url: '{{ apache_url }}'
+        method: HEAD
+      register: solr_url
+      failed_when: solr_url.status is undefined or solr_url.status <= 0 
+      when: url_enabled == True 
+      
+    - name: Downloading file from url
+      get_url:
+        url: '{{apache_url}}/{{apache_file}}'
+        dest: /tmp/automation/solr/
+      when: solr_exists.stat.exists == False and url_enabled == True
+
+    - name: Check if the local file exists
+      stat:
+        path: /tmp/automation/src/{{apache_file}}
+      register: solr_exists_local
+      delegate_to: 127.0.0.1
+      
+
+    - debug:
+        msg: "Source File doesnt exists on local machine"
+      when: solr_exists_local.stat.exists == False
+
+    - debug:
+        msg: "Source File exists on local machine"
+      when: solr_exists_local.stat.exists == True
+
+    - name: Copying file locally
+      copy: 
+        src: /tmp/automation/src/{{apache_file}}
+        dest: /tmp/automation/solr/
+      when: url_enabled == False and solr_exists.stat.exists == False and solr_exists_local.stat.exists == True
+    
