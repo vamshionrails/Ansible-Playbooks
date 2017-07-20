@@ -1,0 +1,30 @@
+---
+# Tasks specific for RedHat systems
+
+# Add Zabbix Repo
+- name: "RedHat | Install basic repo file"
+  sudo: yes
+  template: src=rhel.repo.j2
+            dest=/etc/yum.repos.d/zabbix.repo
+            owner=root
+            group=root
+            mode=0644
+  when: zabbix_repo
+
+# Pyton Ansible dependencies
+- name: "RedHat | Install Ansible module dependencies"
+  yum: name=python-psycopg2
+       state=present
+  when: zabbix_database_creation
+  tags:
+    - zabbix-proxy
+    - init
+
+- name: "RedHat | Installing zabbix-proxy-database_type"
+  yum:  pkg=zabbix-proxy-{{ database_type }}.x86_64
+        state=present
+  when: database_type == 'sqlite3'
+
+
+
+

@@ -1,0 +1,113 @@
+ProxyMode={{ proxy_mode }}
+Server={{ zabbix_server_host }}
+ServerPort={{ zabbix_server_port }}
+Hostname={{ inventory_hostname  }}
+ListenPort={{ proxy_listenport }}
+
+{% if proxy_sourceip is defined and proxy_sourceip %}
+SourceIP={{ proxy_sourceip }}
+{% endif %}
+
+LogFile={{ proxy_logfile }}
+LogFileSize={{ proxy_logfilesize }}
+
+DebugLevel={{ proxy_debuglevel }}
+
+PidFile={{ proxy_pidfile }}
+
+DBHost={{ proxy_dbhost }}
+
+DBName={{ proxy_dbname }}
+
+{% if proxy_dbschema is defined and proxy_dbschema %}
+DBSchema={{ proxy_dbschema }}
+{% endif %}
+
+DBUser={{ proxy_dbuser }}
+DBPassword={{ proxy_dbpassword }}
+
+ProxyLocalBuffer={{ proxy_localbuffer }}
+ProxyOfflineBuffer={{ proxy_offlinebuffer }}
+HeartbeatFrequency={{ proxy_heartbeatfrequency }}
+ConfigFrequency={{ proxy_configfrequency }}
+DataSenderFrequency={{ proxy_datasenderfrequency }}
+
+############ ADVANCED PARAMETERS ################
+
+StartPollers={{ proxy_startpollers }}
+StartIPMIPollers={{ proxy_startipmipollers }}
+StartPollersUnreachable={{ proxy_startpollersunreachable }}
+StartTrappers={{ proxy_starttrappers }}
+StartPingers={{ proxy_startpingers }}
+StartDiscoverers={{ proxy_startdiscoverers }}
+StartHTTPPollers={{ proxy_starthttppollers }}
+
+{% if proxy_javagateway is defined and proxy_javagateway %}
+JavaGateway={{ proxy_javagateway }}
+JavaGatewayPort={{ proxy_javagatewayport }}
+
+StartJavaPollers={{ proxy_startjavapollers }}
+{% endif %}
+
+{% if zabbix_version == '2.2' or zabbix_version == '2.4' %}
+StartVMwareCollectors={{ proxy_startvmwarecollector }}
+
+VMwareFrequency={{ proxy_vmwarefrequency }}
+VMwareCacheSize={{ proxy_vmwarecachesize -}}M
+{% endif %}
+
+SNMPTrapperFile={{ proxy_snmptrapperfile }}
+StartSNMPTrapper={{ proxy_snmptrapper }}
+
+{% if proxy_listenip is defined and proxy_listenip %}
+ListenIP={{ proxy_listenip }}
+{% endif %}
+
+HousekeepingFrequency={{ proxy_housekeepingfrequency }}
+CacheSize={{ proxy_casesize -}}M
+
+StartDBSyncers={{ proxy_startdbsyncers }}
+HistoryCacheSize={{ proxy_historycachesize -}}M
+
+{% if zabbix_version == '3.2' %}
+HistoryIndexCacheSize={{ proxy_historyindexcachesize -}}M
+{% endif %}
+
+{% if zabbix_version == '2.2' or zabbix_version == '2.4' %}
+HistoryTextCacheSize={{ proxy_historytextcachesize -}}M
+{% endif %}
+
+Timeout={{ proxy_timeout }}
+TrapperTimeout={{ proxy_trappertimeout }}
+UnreachablePeriod={{ proxy_unreachableperiod }}
+UnavailableDelay={{ proxy_unavaliabledelay }}
+UnreachableDelay={{ proxy_unreachabedelay }}
+ExternalScripts={{ proxy_externalscripts }}
+FpingLocation={{ proxy_fpinglocation }}
+Fping6Location={{ proxy_fping6location }}
+
+{% if proxy_sshkeylocation is defined and proxy_sshkeylocation %}
+SSHKeyLocation={{ proxy_sshkeylocation }}
+{% endif %}
+
+LogSlowQueries={{ proxy_loglowqueries }}
+TmpDir={{ proxy_tmpdir }}
+
+{% if zabbix_version|string() == '2.2' or zabbix_version|string() == '2.4' %}
+
+AllowRoot={{ proxy_allowroot }}
+{% endif %}
+
+### Option: Include
+Include={{ proxy_include }}
+
+####### LOADABLE MODULES #######
+
+{% if zabbix_version|string() == '2.2' or zabbix_version|string() == '2.4' or zabbix_version|string() == '3.0' %}
+LoadModulePath={{ proxy_loadmodulepath }}
+{% endif %}
+
+{% if proxy_loadmodule is defined and proxy_loadmodule %}
+LoadModule={{ proxy_loadmodule }}
+{% endif %}
+

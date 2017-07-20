@@ -1,0 +1,52 @@
+---
+# tasks file for dj-wasabi.zabbix-proxy
+
+- name: "Install the correct repository"
+  include: "RedHat.yml"
+  when: ansible_os_family == "RedHat"
+
+- name: Create sqlite directory.
+  file: >
+      path=/var/lib/sqlite3/dbs
+      owner=zabbix
+      group=zabbix
+      mode=774
+      state=directory
+  
+- name: Dump default schema 
+  shell: sqlite3 /var/lib/sqlite3/dbs/zabbix.db < /home/predator/Desktop/ansible/zabbix/files/schema.sql
+  when: database_schema
+
+- name: Create database permissions.
+  file: >
+      path=/var/lib/sqlite3/dbs/zabbix.db
+      owner=zabbix
+      group=zabbix
+      mode=664
+      state=file
+
+- name: "Create include dir zabbix-proxy"
+  file: path={{ proxy_include }}
+         owner=zabbix
+         group=zabbix
+         mode=0755
+         state=directory
+
+- name: "Create module dir zabbix-proxy"
+  file: path={{ proxy_loadmodulepath }}
+         owner=zabbix
+         group=zabbix
+         state=directory
+
+- name: "Configure zabbix-proxy"
+  template: src=zabbix_proxy.conf.j2
+            dest=/etc/zabbix/zabbix_proxy.conf
+            owner=root
+            group=root
+            mode=0644
+
+- name: "zabbix-proxy started"
+  service: name=zabbix-proxy
+           state=restarted
+           enabled=yes
+
