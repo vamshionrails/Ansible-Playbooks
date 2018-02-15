@@ -1,0 +1,72 @@
+#VERSION: 0.0.3
+
+---
+- hosts: launched
+  sudo: yes
+
+  vars_files:
+    - vars.yml
+
+  tasks:
+
+  - name: download latest stable redis
+    get_url: url=https://s3-us-west-2.amazonaws.com/vamshi-production-yum/x86_64/redis-stable.tar.gz dest=/tmp/redis-stable.tar.gz
+
+  - name: untar redis
+    command: tar zxf /tmp/redis-stable.tar.gz -C /tmp
+
+  - name: build redis
+    command: make -C /tmp/redis-stable
+
+  - name: create redis group
+    group: name=redis state=present system=yes
+
+  - name: create redis user
+    user: name=redis group=redis createhome=no shell=/bin/false system=yes state=present
+
+  - name: make sure that /data/redis exists
+    file: path=/data/redis state=directory mode=0755
+
+  - name: make sure that /data/redis/bin exists
+    file: path=/data/redis/bin state=directory mode=0755
+  
+  - name: make sure that /data/redis/logs exists
+    file: path=/data/redis/logs state=directory mode=0755
+
+  - name: make sure that /data/redis/conf exists
+    file: path=/data/redis/conf state=directory mode=0755
+
+  - name: make sure that /data/redis/db exists
+    file: path=/data/redis/db state=directory mode=0755 group=redis owner=redis
+
+  - name: make sure redis.log file exists
+    copy: src=templates/redis.log dest=/data/redis/logs/redis.log owner=redis group=redis mode=0644
+
+  - name: copy upstart file
+    copy: src=templates/upstart.conf dest=/data/redis/conf/redis.conf
+
+  - name: copy redis.conf file
+    copy: src=templates/redis.conf dest=/data/redis/conf/redis.conf group=redis owner=redis
+
+  - name: copy custom template
+    template: src=templates/redis.local.conf.j2 dest=/data/redis/conf/redis.local.conf group=redis owner=redis
+
+  - name: copy redis-local script
+    template: src=templates/redis-local.j2 dest=/data/redis/conf/redis-local mode=0755
+
+  - name: installing redis binaries
+    command: cp /tmp/redis-stable/src/{{ item }} /data/redis/bin/
+    with_items: 
+      - redis-server
+      - redis-cli
+      - redis-check-aof
+
+  - name: cleaning up build files
+    command: rm -rf /tmp/{{ item }}
+    with_items:
+      - redis-stable
+      - redis-stable.tar.gz
+
+  - name: ensure redis service is restarted
+    service: name=redis state=restarted
+
